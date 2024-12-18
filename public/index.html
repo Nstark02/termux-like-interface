@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termux-like Interface</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body { font-family: monospace; background: black; color: white; }
+        #output { white-space: pre; }
+        input { width: 100%; background: black; color: white; border: none; }
+    </style>
+</head>
+<body>
+    <div id="output"></div>
+    <input id="command" placeholder="Type a command and press Enter" />
+    <script>
+        const socket = io();
+        const output = document.getElementById('output');
+        const commandInput = document.getElementById('command');
+
+        commandInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const command = commandInput.value;
+                socket.emit('command', command);
+                commandInput.value = '';
+            }
+        });
+
+        socket.on('output', (data) => {
+            output.textContent += data + '\n';
+        });
+    </script>
+</body>
+</html>
